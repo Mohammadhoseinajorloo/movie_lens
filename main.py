@@ -1,4 +1,5 @@
 from constants import *
+from tabulate import tabulate
 import pandas as pd 
 import os
 
@@ -25,10 +26,9 @@ class Dataset:
         return False
 
     def __repr__(self):
-        text = " "
-        for row in self.dataset.values:
-            text += f"{row}\n"
-        return text
+        metadata = self.dataset.values
+        head = self.dataset.columns
+        return tabulate (metadata, headers=head, tablefmt="grid")[:1000]
 
 if __name__ == '__main__':
     dataset = Dataset(PATH)
