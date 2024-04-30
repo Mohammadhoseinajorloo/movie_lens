@@ -1,1 +1,1 @@
-PATH = '/home/mohammad/Development/movie-lens/data'
+PATH = '/home/mohammad/Development/projects/movie-lens/data'
