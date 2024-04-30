@@ -42,5 +42,5 @@ class Dataset:
     def __repr__(self) -> str:
         text:str = ''
         text += f'shape:\n  rows:{self.dataset.shape[0]}\n  columns:{self.dataset.shape[1]} -> {[column for column in self.dataset.columns]}\n'
-        text += f'count_null:\n{self.dataset.isnull().sum()/self.dataset.shape[0]*100}\n'
+
         return text 
