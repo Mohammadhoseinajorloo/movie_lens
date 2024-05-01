@@ -20,8 +20,7 @@ from dataset import Dataset
 #How many unique values?
 #For each numerical attribute:
 #What is the distribution?
-# 5. More Data Cleaning
-
+# 5.
 class Preprocessing:
     def __init__(self, dataset):
         self.dataset = dataset
@@ -31,5 +30,4 @@ class Preprocessing:
 
 if __name__ == '__main__':
     dataset = Dataset(PATH)
-    dataset = Preprocessing(dataset)
     print(dataset)
