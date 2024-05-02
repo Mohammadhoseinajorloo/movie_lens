@@ -21,6 +21,7 @@ class Dataset:
         for file in files:
             if file.endswith('.csv'):
                 self.dataframes[file.split('.')[0]] = pd.read_csv(os.path.join(directory, file))
+            # https://pandas.pydata.org/docs/getting_started/intro_tutorials/02_read_write.html#
             # TODO:added other format e.x:
             elif file.endswith('.xlsx'):
                 pass

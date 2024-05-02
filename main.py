@@ -1,5 +1,7 @@
 from constants import *
 from dataset import Dataset
+import pandas as pd 
+import numpy as np
 
 # 1. anonymization
 # 2. how to evaluate a model : train-validation split
@@ -21,13 +23,42 @@ from dataset import Dataset
 #For each numerical attribute:
 #What is the distribution?
 # 5.
-class Preprocessing:
-    def __init__(self, dataset):
-        self.dataset = dataset
 
-    def drop_nulls(self):
-        pass
+
+# This class one dataframe return output
+class Preprocessing:
+
+    def __init__(self, dataset):
+        self.dataframes = dataset.dataframes
+        self.dataframe = None
+
+
+    def _split_geners(self, column):
+        geners = []
+        for row in column.values:
+            for item in row.split("|"):
+                geners.append(item)
+        return list(set(geners))
+
+
+    def prep_movies(self, dataframe):
+        ds_geners = dataframe['genres']
+        columns = self._split_geners(ds_geners)
+        
+        df = pd.DataFrame(np.zeros((ds_geners.shape[0], len(columns))), columns=columns)
+        print(df.iloc[:,:])
+
+#    def __repr__(self):
+#        _str = ''
+#        _str += f'{self.dataframe.shape}'
+#        return _str
+
+
+def main():
+    dataset = Dataset(PATH)
+    dataframe = Preprocessing(dataset)
+    dataframe.prep_movies(dataframe.dataframes['movies'])
+
 
 if __name__ == '__main__':
-    dataset = Dataset(PATH)
-    print(dataset)
+    main()
