@@ -1,4 +1,3 @@
-from contstant import PARENT
 from file import File
 import os
 
