@@ -1,5 +1,5 @@
-from dataset.reader import Dataset
+from dataset.reader import Reader
 
 if __name__ == "__main__":
-    dataset = Dataset()
-    print(dataset)
+    links = Reader('links.csv').reader()
+    print(links.info())
