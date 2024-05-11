@@ -4,18 +4,21 @@ import os
 
 class Reader:
     def __init__(self, filename):
-        self.path_object = Path(filename)
-        self.path = self.path_object.address
+        self.path_obj = Path(filename)
+        self.path = self.path_obj.address
 
     def _whatformat(self):
-         return self.path_object.file_object.extention
+         return self.path_obj.file_object.extention
 
     def reader(self):
         format = self._whatformat()
         if format == "csv":
-            dataframe = pd.read_csv(self.path)
-        # TODO: add other format for reader data
-        return dataframe
+            return pd.read_csv(self.path)
+        if format == "json":
+            return pd.read_json(self.path)
+        if format in ['xls', 'xlsx']:
+            return pd.read_excel(self.path)
+        raise ValueError('Unknown file format!!!')
 
     def __repr__(self):
         _str = ""

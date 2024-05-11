@@ -2,26 +2,28 @@ from dataset.reader import Reader
 from preprocessing import Preprocessing
 
 def read_data(filenames):
-    movies = Reader(filenames[0]).reader().loc[:, ['movieId', 'genres']]
-    tags = Reader(filenames[1]).reader().loc[:,['userId', 'tag']]
-    ratings = Reader(filenames[2]).reader().loc[:, 'rating']
-    return list(movies, tags, ratings)
+    movies = Reader(filenames[0]).reader()
+    tags = Reader(filenames[1]).reader()
+    ratings = Reader(filenames[2]).reader()
+    return list((movies, tags, ratings))
 
 def preprocessing(dataframes):
     preper_df = Preprocessing(dataframes)
-    preper_df = preper_df.merging()
+    preper_df.drop_duplicates()
+    preper_df.check_missing_data()
+    print(preper_df.find_outliers_IQR(1.5))
     return preper_df
 
 
 def content_base_approch():
-    filenames = ['links.csv', 'movies.csv', 'ratings.csv']
+    filenames = ['movies.csv', 'tags.csv', 'ratings.csv']
     dataframes = read_data(filenames)
     preper_df = preprocessing(dataframes)
     return preper_df
 
 def main():
     preper_df = content_base_approch()
-    print(preper_df)
+    return preper_df
 
 
 if __name__ == "__main__":
