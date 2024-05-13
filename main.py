@@ -13,6 +13,7 @@ def preprocessing(dataframe):
     preper_df.drop_duplicates()
     preper_df.check_missing_data()
     preper_df.find_outliers_IQR(1.5)
+    preper_df.content_table(dataframe['genres'])
     return preper_df
 
 

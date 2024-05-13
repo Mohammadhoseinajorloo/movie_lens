@@ -56,22 +56,39 @@ class Preprocessing:
         output:
             dataframe -> finaly dataframe with seting values
         '''
-        content_set = slef._content_set(series)
-        row = ds.shape[0]
+        content_set = self._content_set(series)
+        row = series.shape[0]
         column = len(content_set)
         shape = (row, column)
         zero_array = np.zeros(shape)
         df_zeros = pd.DataFrame(zero_array, columns=content_set)
-        for i, value in enumerate(ds):
-            if sep in ['-', '|', '/', ':']:
-                value = value.split(sep)
-                for item in value:
-                    for c in df_zeros.columns:
-                        if item == c:
-                            df_zeros.loc[i,c] = 1
-                        df_zeros.loc[i,c] = 0
-            raise Extention(f'This seprator {sep} invlide!!!')
+        for i, value in enumerate(series):
+            value = value.split("|")
+            for item in value:
+                for c in df_zeros.columns:
+                    if item == c:
+                        df_zeros.loc[i,c] = 1
+                    df_zeros.loc[i,c] = 0
         return df_zeros
+
+
+    def _content_set(self, series:pd.Series) -> list:
+        '''
+        This function in input series and a list at unique values.
+        input:
+            series -> ghesmati as yek dataframe ke value haye dakhe
+        l an daraye charcter manand "-/|_!@#$%^&*+" bashe
+        output: 
+            list -> listi az meghdar haye uniqeue
+        '''
+        content = []
+        for row in series.values:
+                row = row.split("|")
+                for item in row:
+                    if item in content:
+                        continue
+                    content.append(item)
+        return content
 
 
     def _dealing_missing_data(self):
