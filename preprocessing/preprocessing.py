@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from tqdm import tqdm
 
 class Preprocessing:
 
@@ -62,14 +63,32 @@ class Preprocessing:
         shape = (row, column)
         zero_array = np.zeros(shape)
         df_zeros = pd.DataFrame(zero_array, columns=content_set)
-        for i, value in enumerate(series):
+        for i, value in tqdm(enumerate(series)):
             value = value.split("|")
-            for item in value:
-                for c in df_zeros.columns:
+            for item in tqdm(value):
+                for c in tqdm(df_zeros.columns):
                     if item == c:
                         df_zeros.loc[i,c] = 1
-                    df_zeros.loc[i,c] = 0
         return df_zeros
+
+
+    def split_title_year(self, x: str) -> str | int :
+        '''
+        in function yek string ke shamel titile har film va sal sakhte an mishavad ra migirad va title va sal sakht ra az ham joda mkondad va be onvan 2 moalefe bazmigardanad\
+        input:
+            x -> str - name va sal sakhte be surat yek srting yek parche 
+        output:
+            title -> str - name yek film
+            year -> int - sla sakhte an film
+
+        '''
+        try:
+            year = int(x.split(" ")[-1][1:-1])
+            title = " ".join(x.split(" ")[:-1])
+        except:
+            year = None
+            title = x
+        return year, title
 
 
     def _content_set(self, series:pd.Series) -> list:
