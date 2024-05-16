@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
+import time
 
 class Preprocessing:
 
@@ -57,18 +58,24 @@ class Preprocessing:
         output:
             dataframe -> finaly dataframe with seting values
         '''
+        pbar1 = tqdm(desc='processing index', leave=False, total=len(series))
+        pbar2 = tqdm(desc='processing item', leave=False, total=len(series))
+        pbar3 = tqdm(desc='processing columns', leave=False, total=len(series))
         content_set = self._content_set(series)
         row = series.shape[0]
         column = len(content_set)
         shape = (row, column)
         zero_array = np.zeros(shape)
         df_zeros = pd.DataFrame(zero_array, columns=content_set)
-        for i, value in tqdm(enumerate(series)):
+        for i, value in enumerate(series):
             value = value.split("|")
-            for item in tqdm(value):
-                for c in tqdm(df_zeros.columns):
+            pbar1.update(1)
+            for item in value:
+                pbar2.update(1)
+                for c in df_zeros.columns:
                     if item == c:
                         df_zeros.loc[i,c] = 1
+                    pbar3.update(1)
         return df_zeros
 
 
@@ -82,13 +89,9 @@ class Preprocessing:
             year -> int - sla sakhte an film
 
         '''
-        try:
-            year = int(x.split(" ")[-1][1:-1])
-            title = " ".join(x.split(" ")[:-1])
-        except:
-            year = None
-            title = x
-        return year, title
+        title = " ".join(x.split(" ")[:-1])
+        year = x.split(" ")[-1][1:-1]
+        return title, year
 
 
     def _content_set(self, series:pd.Series) -> list:
