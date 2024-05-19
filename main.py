@@ -20,6 +20,7 @@ def preprocessing(dataframe):
 def content_base_approch():
     filenames = ['movies.csv', 'tags.csv', 'ratings.csv', 'links.csv']
     movies, tags, ratings, links = read_data(filenames)
+
     #--------------------------------------------------
     # Movies
     #--------------------------------------------------
