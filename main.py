@@ -25,11 +25,16 @@ def content_base_approch():
     # Movies
     #--------------------------------------------------
     movies_obj = preprocessing(movies)
-    df = movies_obj.content_table(movies['genres'])
-    df2 = movies.iloc[:,:2]
-    df3 = pd.concat([df2, df], axis=1)
-    df3['years'] = df3['title'].apply(lambda x: movies_obj.split_title_year(x)[1])
-    df3['title'] = df3['title'].apply(lambda x: movies_obj.split_title_year(x)[0])
+    years, titles = movies_obj.split_title_year(movies, 'title')
+    movies['title'] = titles
+    movies['years'] = years
+    content_table = movies_obj.content_table(movies['genres'])
+    df2 = movies[['movieId', 'title', 'years']]
+    df3 = pd.concat([df2, content_table], axis=1)
+    yn = df3[df3['years'].isnull()]
+    print(yn[['title', 'years']])
+
+
 
 def main():
     preper_df = content_base_approch()

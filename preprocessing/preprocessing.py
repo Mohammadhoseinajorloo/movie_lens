@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import time
+from zenrows import ZenRowsClient
 
 class Preprocessing:
 
@@ -79,21 +80,56 @@ class Preprocessing:
         return df_zeros
 
 
-    def split_title_year(self, x: str) -> str | int :
+    def split_title_year(self, df:pd.DataFrame, cn: str) -> list|list:
         '''
-        in function yek string ke shamel titile har film va sal sakhte an mishavad ra migirad va title va sal sakht ra az ham joda mkondad va be onvan 2 moalefe bazmigardanad\
+        in function yek dataframe va name yek sutun ke shamel name film va sal sakht an ast migirad va anyara az ham jodamikonad
+        va dakhel do list mokhtalef mirizad
         input:
-            x -> str - name va sal sakhte be surat yek srting yek parche 
+            df -> pd.DataFrame 
+            cn -> str name sutun
         output:
-            title -> str - name yek film
-            year -> int - sla sakhte an film
-
+            years -> (list) sal sakhte film ha (film hai ke sal sakht nadashte and meghdar None migirand)
+            titles -> (list) name film
         '''
-        title = " ".join(x.split(" ")[:-1])
-        year = x.split(" ")[-1][1:-1]
-        return title, year
+        years = []
+        titles = []
+        for value in df[cn]:
+            try:
+                value =  value.strip()
+                years.append(int(value.split(" ")[-1][1:-1]))
+                titles.append(" ".join(value.split(" ")[:-1]))
+            except:
+                years.append(None)
+                titles.append(value)
+                continue
+        return years, titles
 
 
+    def year_find(self, df: pd.DataFrame) -> list:
+        '''
+        in function yek dataframe ro az shoma migire va 
+        ruye tamam title hai ke maghdire sal sakhteshun None
+        hast peymayesh mkone va betore khodkar tamam sal sakhte 
+        in film haro az site imdb peyda mikone va dakhel yek list barmigardune.
+        input:
+            df -> (pd.DataFrame) df ke daraye maghadire None ast
+        output:
+            years -> (list) sal sakhte tamam film haye None
+        '''
+        pbar = tqdm(desc='searching...',leave=False, total=len(df))
+        years = []
+        client = ZenRowsClient("10043bd804816cb74a7093907c180b127e9eb704")
+        for title in df['title']:
+            url = "https://www.imdb.com/find/?q="+title
+            response = client.get(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            y = soup.findAll("span", {"class": "ipc-metadata-list-summary-item__li"})[0]
+            pbar.update(1)
+            for i in y.children:
+                years.append(i)
+        return years
+
+    
     def _content_set(self, series:pd.Series) -> list:
         '''
         This function in input series and a list at unique values.
