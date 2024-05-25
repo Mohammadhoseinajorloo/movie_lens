@@ -1,8 +1,9 @@
+import time
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
-import time
 from zenrows import ZenRowsClient
+from bs4 import BeautifulSoup
 
 class Preprocessing:
 
@@ -116,7 +117,7 @@ class Preprocessing:
         output:
             years -> (list) sal sakhte tamam film haye None
         '''
-        pbar = tqdm(desc='searching...',leave=False, total=len(df))
+        pbar = tqdm(desc='Please wait...',leave=False, total=len(df))
         years = []
         client = ZenRowsClient("10043bd804816cb74a7093907c180b127e9eb704")
         for title in df['title']:
@@ -126,7 +127,7 @@ class Preprocessing:
             y = soup.findAll("span", {"class": "ipc-metadata-list-summary-item__li"})[0]
             pbar.update(1)
             for i in y.children:
-                years.append(i)
+                years.append(int(i[:4]))
         return years
 
     

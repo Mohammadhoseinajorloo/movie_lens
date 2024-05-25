@@ -31,8 +31,10 @@ def content_base_approch():
     content_table = movies_obj.content_table(movies['genres'])
     df2 = movies[['movieId', 'title', 'years']]
     df3 = pd.concat([df2, content_table], axis=1)
-    yn = df3[df3['years'].isnull()]
-    print(yn[['title', 'years']])
+    null_years = movies_obj.year_find(df3[df3['years'].isnull()])
+    null_index = df3[df3['years'].isnull()].index
+    df3.loc[null_index, 'years'] = null_years
+    print(df3.info())
 
 
 
