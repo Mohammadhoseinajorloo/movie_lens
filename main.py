@@ -9,22 +9,14 @@ def read_data(filenames):
     links = Reader(filenames[3]).reader()
     return movies, tags, ratings, links
 
-def preprocessing(dataframe):
-    preper_df = Preprocessing(dataframe)
-    preper_df.drop_duplicates()
-    preper_df.check_missing_data()
-    preper_df.find_outliers_IQR(1.5)
-    return preper_df
-
-
-def content_base_approch():
+def preprocessing():
     filenames = ['movies.csv', 'tags.csv', 'ratings.csv', 'links.csv']
     movies, tags, ratings, links = read_data(filenames)
 
     #--------------------------------------------------
     # Movies
     #--------------------------------------------------
-    movies_obj = preprocessing(movies)
+    movies_obj = Preprocessing(movies)
     years, titles = movies_obj.split_title_year(movies, 'title')
     movies['title'] = titles
     movies['years'] = years
@@ -37,9 +29,12 @@ def content_base_approch():
     print(df3.info())
 
 
+def content_base_approch():
+    pass
+
 
 def main():
-    preper_df = content_base_approch()
+    preper_df = preprocessing()
     return preper_df
 
 
