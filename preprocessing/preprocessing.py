@@ -2,7 +2,6 @@ import time
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
-from zenrows import ZenRowsClient
 from bs4 import BeautifulSoup
 
 class Preprocessing:
