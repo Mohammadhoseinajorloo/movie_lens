@@ -1,44 +1,83 @@
-from dataset.reader import Reader
-from preprocessing import Preprocessing
 import pandas as pd
+import streamlit as st
+import os
+import requests
 
-def read_data(filenames):
-    movies = Reader(filenames[0]).reader()
-    tags = Reader(filenames[1]).reader()
-    ratings = Reader(filenames[2]).reader()
-    links = Reader(filenames[3]).reader()
-    return movies, tags, ratings, links
+####################
+#####Constanses#####
+####################
 
-def preprocessing():
-    filenames = ['movies.csv', 'tags.csv', 'ratings.csv', 'links.csv']
-    movies, tags, ratings, links = read_data(filenames)
+DATA_PATH = os.path.abspath("data")
+FILES = os.listdir(DATA_PATH)
 
-    #--------------------------------------------------
-    # Movies
-    #--------------------------------------------------
-    movies_obj = Preprocessing(movies)
-    years, titles = movies_obj.split_title_year(movies, 'title')
-    movies['title'] = titles
-    movies['years'] = years
-    content_table = movies_obj.content_table(movies['genres'])
-    df2 = movies[['movieId', 'title', 'years']]
-    df3 = pd.concat([df2, content_table], axis=1)
-    null_years = movies_obj.year_find(df3[df3['years'].isnull()])
-    null_index = df3[df3['years'].isnull()].index
-    df3.loc[null_index, 'years'] = null_years
-    print(df3.info())
+MOVIES_PATH = os.path.join(DATA_PATH, FILES[0])
+RATINGS_PATH = os.path.join(DATA_PATH, FILES[1])
+TAGS_PATH = os.path.join(DATA_PATH, FILES[2])
+LINKS_PATH = os.path.join(DATA_PATH, FILES[3])
+
+############################
+########Fetch Poster########
+############################
+
+def fetch_poster(movieid):
+    api = "https://api.themoviedb.org/3/movie/" + str(movieid) + "?api_key=4c66f711cd0eece2baa79637c2d7fd94"
+    resopnse = requests.get(api)
+    if resopnse.status_code == 200:
+        json = resopnse.json()
+        return "https://image.tmdb.org/t/p/w500" + json["poster_path"]
+
+###################################
+########Simple Recommenders########
+###################################
+
+def simple_recommenders(n=5):
+    '''
+    Simple recommenders: offer generalized recommendations to every user, based on movie popularity and/or genre. The basic idea behind this system is that movies that are more popular and critically acclaimed will have a higher probability of being liked by the average audience. An example could be IMDB Top 250.
+    ===
+    parameters:
+    1. n (int)[defult=5]
+        number of top movies
+    '''
+    recommenders_movies = []
+    recommenders_poster = []
+
+    movies = pd.read_csv(MOVIES_PATH)
+    ratings = pd.read_csv(RATINGS_PATH)
+    links = pd.read_csv(LINKS_PATH)
+
+    ratings["title"] = ratings["movieId"].map(movies.set_index("movieId")["title"])
+    ratings["poster"] = ratings["movieId"].map(links.set_index("movieId")["tmdbId"])
+
+    sorted_ratings = ratings.sort_values(by=["rating"], ascending=False).reset_index(drop=True)
+
+    top_five = sorted_ratings[:n]
+    
+    for i in top_five.values:
+        recommenders_movies.append(i[-2])
+        recommenders_poster.append(fetch_poster(i[-1]))
+
+    return recommenders_movies, recommenders_poster
 
 
-def content_base_approch():
-    pass
-
-
-def main():
-    preper_df = preprocessing()
-    return preper_df
-
-
+####################
+########Main########
+####################
 if __name__ == "__main__":
-    main()
-
-
+    st.write("# Simple Recommender")
+    recommenders_movies, recommenders_poster = simple_recommenders()
+    col1, col2, col3, col4, col5 = st.columns(5, gap="medium")
+    with col1:
+        st.text(recommenders_movies[0])
+        st.image(recommenders_poster[0])
+    with col2:
+        st.text(recommenders_movies[1])
+        st.image(recommenders_poster[1])
+    with col3:
+        st.text(recommenders_movies[2])
+        st.image(recommenders_poster[2])
+    with col4:
+        st.text(recommenders_movies[3])
+        st.image(recommenders_poster[3])
+    with col5:
+        st.text(recommenders_movies[4])
+        st.image(recommenders_poster[4])
