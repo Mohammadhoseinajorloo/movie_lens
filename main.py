@@ -51,13 +51,26 @@ def simple_recommenders(n=5):
     sorted_ratings = ratings.sort_values(by=["rating"], ascending=False).reset_index(drop=True)
 
     top_five = sorted_ratings[:n]
-    
+
     for i in top_five.values:
         recommenders_movies.append(i[-2])
         recommenders_poster.append(fetch_poster(i[-1]))
 
     return recommenders_movies, recommenders_poster
 
+
+#########################################
+########Content_Base_Recommenders########
+#########################################
+def content_base_recommenders(movie):
+    """
+    suggest similar items based on a particular item. This system uses item metadata, such as genre, director, description, actors, etc. for movies, to make these recommendations. The general idea behind these recommender systems is that if a person likes a particular item, he or she will also like an item that is similar to it. And to recommend that, it will make use of the user's past item metadata. A good example could be YouTube, where based on your history, it suggests you new videos that you could potentially watch.
+    ===
+    parameters:
+    1. movie (str)
+        name movie for recommender
+    """
+    pass
 
 ####################
 ########Main########
