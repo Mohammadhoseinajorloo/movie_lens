@@ -1,0 +1,1 @@
+from .contentbase import Contentbase
